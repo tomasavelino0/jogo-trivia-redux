@@ -1,1 +1,5 @@
-// aqui vai ser a store
+import { combineReducers } from 'redux';
+
+const reducer = combineReducers({ });
+
+export default reducer;
