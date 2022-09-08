@@ -31,12 +31,11 @@ class Login extends React.Component {
     }
   };
 
-  // handleSubmit = (event) => {
-  //   event.preventDefault();
-  //   const { dispatch, history } = this.props;
+  // handleSubmit = () => {
+  //   const { dispatch } = this.props;
   //   const { email } = this.state;
-  //   dispatch(getEmail(email));
-  //   history.push('/carteira');
+  //   dispatch(getPerson());
+  //   // history.push('/');
   // };
 
   render() {
