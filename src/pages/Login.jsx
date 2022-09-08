@@ -31,16 +31,8 @@ class Login extends React.Component {
     }
   };
 
-  // handleSubmit = () => {
-  //   const { dispatch } = this.props;
-  //   const { email } = this.state;
-  //   dispatch(getPerson());
-  //   // history.push('/');
-  // };
-
-  logIn = () => {
+  settingsIn = () => {
     const { dispatch, history } = this.props;
-    // const { email } = this.state;
     dispatch(settings());
     history.push('/settings');
   };
@@ -86,9 +78,8 @@ class Login extends React.Component {
             </button>
             <button
               data-testid="btn-settings"
-              // disabled={ isButtonDisabled }
               type="button"
-              onClick={ this.logIn }
+              onClick={ this.settingsIn }
             >
               Configurações
             </button>
