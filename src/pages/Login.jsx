@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addEmailAction, getToken } from '../Redux/Actions';
+import { addEmailAction, getToken, settings } from '../Redux/Actions';
 import { saveToken } from '../services/handleStorage';
 
 class Login extends React.Component {
@@ -10,11 +10,6 @@ class Login extends React.Component {
     email: '',
     isButtonDisabled: true,
   };
-
-  // componentDidMount() {
-  //   const { dispatch } = this.props;
-  //   dispatch(getToken());
-  // }
 
   onInputChange = ({ target }) => {
     this.setState({
@@ -46,8 +41,15 @@ class Login extends React.Component {
     history.push('/game');
   };
 
+  handleSettings = () => {
+    const { history, dispatch } = this.props;
+    dispatch(settings());
+    history.push('/settings');
+  };
+
   render() {
     const { isButtonDisabled, email, name } = this.state;
+
     return (
       <main>
         <form onSubmit={ this.handleSubmit }>
@@ -85,6 +87,13 @@ class Login extends React.Component {
             >
               Play
 
+            </button>
+            <button
+              data-testid="btn-settings"
+              type="button"
+              onClick={ this.handleSettings }
+            >
+              Configurações
             </button>
           </label>
         </form>

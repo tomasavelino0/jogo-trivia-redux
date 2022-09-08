@@ -1,5 +1,8 @@
 // actions
 export const ADD_EMAIL = 'ADD_EMAIL';
+export const SETTINGS = 'SETTINGS';
+
+export const settings = () => ({ type: SETTINGS });
 
 export function addEmailAction(email) {
   return {
