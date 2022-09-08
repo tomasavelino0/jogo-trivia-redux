@@ -1,7 +1,8 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { getEmail } from '../redux/actions';
+import { addEmailAction, getToken } from '../Redux/Actions';
+import { saveToken } from '../services/handleStorage';
 
 class Login extends React.Component {
   state = {
@@ -9,6 +10,11 @@ class Login extends React.Component {
     email: '',
     isButtonDisabled: true,
   };
+
+  // componentDidMount() {
+  //   const { dispatch } = this.props;
+  //   dispatch(getToken());
+  // }
 
   onInputChange = ({ target }) => {
     this.setState({
@@ -31,12 +37,14 @@ class Login extends React.Component {
     }
   };
 
-  // handleSubmit = () => {
-  //   const { dispatch } = this.props;
-  //   const { email } = this.state;
-  //   dispatch(getPerson());
-  //   // history.push('/');
-  // };
+  handleSubmit = async () => {
+    const { dispatch, history } = this.props;
+    const { email } = this.state;
+    dispatch(addEmailAction(email));
+    const result = await getToken();
+    saveToken(result);
+    history.push('/game');
+  };
 
   render() {
     const { isButtonDisabled, email, name } = this.state;
@@ -73,6 +81,7 @@ class Login extends React.Component {
               data-testid="btn-play"
               disabled={ isButtonDisabled }
               type="button"
+              onClick={ this.handleSubmit }
             >
               Play
 
@@ -84,11 +93,11 @@ class Login extends React.Component {
   }
 }
 
-// Login.propTypes = {
-//   dispatch: PropTypes.func.isRequired,
-//   history: PropTypes.shape({
-//     push: PropTypes.func.isRequired,
-//   }).isRequired,
-// };
+Login.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 export default connect()(Login);

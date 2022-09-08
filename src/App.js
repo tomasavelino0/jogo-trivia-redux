@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import Login from './pages/Login';
+import Game from './pages/Game';
 
 class App extends Component {
   render() {
@@ -12,6 +13,10 @@ class App extends Component {
             exact
             path="/"
             component={ Login }
+          />
+          <Route
+            path="/game"
+            component={ Game }
           />
         </Switch>
       </div>
