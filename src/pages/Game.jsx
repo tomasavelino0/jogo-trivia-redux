@@ -4,11 +4,17 @@ import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
 
 const RANDOM_NEGATIVE = 0.5;
+const CORRECT_ANSWER = 'correct-answer';
+const INCORRECT_ANSWER = 'incorrect-answer';
 
 class Game extends Component {
   state = {
     triviaQuestions: [],
     currentIndex: 0,
+    // feedback: false,
+    // disabled: false,
+    // correctCSS: '',
+    // incorrectCSS: '',
   };
 
   async componentDidMount() {
@@ -33,12 +39,25 @@ class Game extends Component {
     return answers.map((answer, i) => (
       <button
         type="button"
-        data-testid={ answer === correct ? 'correct-answer' : `wrong-answer-${i}` }
+        // className={ (answer === correct) ? correctCSS : incorrectCSS }
+        onClick={ this.handleButton }
+        id={ answer === correct ? CORRECT_ANSWER : INCORRECT_ANSWER }
+        data-testid={ answer === correct ? CORRECT_ANSWER : `wrong-answer-${i}` }
         key={ answer }
       >
         { answer }
       </button>
     ));
+  };
+
+  handleButton = ({ target }) => {
+    const { parentNode } = target;
+    console.log(parentNode);
+    const green = 'border: 3px solid rgb(6, 240, 15)';
+    const red = 'border: 3px solid red';
+    parentNode.childNodes
+      .forEach((child) => ((child.id === CORRECT_ANSWER) ? child
+        .setAttribute('style', green) : child.setAttribute('style', red)));
   };
 
   render() {
