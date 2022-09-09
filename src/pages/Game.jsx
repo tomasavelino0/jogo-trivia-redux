@@ -14,7 +14,7 @@ class Game extends Component {
           src={ getHashGravatar(emailReducer) }
           alt="gravatar"
         />
-        <span data-testid="header-score">Score: 0</span>
+        <span data-testid="header-score">score: 0</span>
       </div>
     );
   }
