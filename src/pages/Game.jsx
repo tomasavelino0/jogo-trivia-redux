@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
 
+const RANDOM_NEGATIVE = 0.5;
+
 class Game extends Component {
   state = {
     triviaQuestions: [],
     currentIndex: 0,
-    answers: [],
   };
 
   async componentDidMount() {
@@ -24,17 +25,24 @@ class Game extends Component {
       this.setState({
         triviaQuestions: fetchResult.results,
       });
-      const answersMap = fetchResult.results.map((result, index) => ({
-        [`answers${index}`]: [result.correct_answer, ...result.incorrect_answers],
-      }));
-      this.setState({
-        answers: answersMap,
-      });
     }
   }
 
+  handleAnswer = (correct, incorrect) => {
+    const answers = [correct, ...incorrect].sort(() => Math.random() - RANDOM_NEGATIVE);
+    return answers.map((answer, i) => (
+      <button
+        type="button"
+        data-testid={ answer === correct ? 'correct-answer' : `wrong-answer-${i}` }
+        key={ answer }
+      >
+        { answer }
+      </button>
+    ));
+  };
+
   render() {
-    const { triviaQuestions, currentIndex, answers } = this.state;
+    const { triviaQuestions, currentIndex } = this.state;
     const { emailReducer, nameReducer } = this.props;
     return (
       <div className="conteiner">
@@ -51,15 +59,16 @@ class Game extends Component {
           (index === currentIndex
             ? (
               <div key={ index }>
-                <p>
+                <p data-testid="question-category">
                   {' '}
                   {question.category}
                 </p>
-                <p>{question.question}</p>
-                <div>
-                  {answers.map((answer, i) => (index === i ? null : (
-                    <button key={ i } type="button">{console.log(answer)}</button>
-                  )))}
+                <p data-testid="question-text">{question.question}</p>
+                <div data-testid="answer-options">
+                  {
+                    this
+                      .handleAnswer(question.correct_answer, question.incorrect_answers)
+                  }
                 </div>
 
               </div>
