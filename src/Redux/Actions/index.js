@@ -1,6 +1,7 @@
 // actions
 export const ADD_EMAIL = 'ADD_EMAIL';
 export const SETTINGS = 'SETTINGS';
+export const ADD_NAME = 'ADD_NAME';
 
 export const settings = () => ({ type: SETTINGS });
 
@@ -8,6 +9,13 @@ export function addEmailAction(email) {
   return {
     type: ADD_EMAIL,
     email,
+  };
+}
+
+export function addName(name) {
+  return {
+    type: ADD_NAME,
+    name,
   };
 }
 

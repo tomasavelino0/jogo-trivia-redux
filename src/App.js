@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import Game from './pages/Game';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import './App.css';
 
 class App extends Component {
   render() {

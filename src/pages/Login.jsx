@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addEmailAction, getToken, settings } from '../Redux/Actions';
+import { addEmailAction, addName, getToken, settings } from '../Redux/Actions';
 import { saveToken } from '../services/handleStorage';
 
 class Login extends React.Component {
@@ -34,8 +34,9 @@ class Login extends React.Component {
 
   handleSubmit = async () => {
     const { dispatch, history } = this.props;
-    const { email } = this.state;
+    const { email, name } = this.state;
     dispatch(addEmailAction(email));
+    dispatch(addName(name));
     const result = await getToken();
     saveToken(result);
     history.push('/game');
