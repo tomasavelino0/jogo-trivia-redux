@@ -6,11 +6,13 @@ import getHashGravatar from '../services/gravatar';
 const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
 const INCORRECT_ANSWER = 'incorrect-answer';
+const FIVE_SECONDS_DISABLED = 25;
 
 class Game extends Component {
   state = {
     triviaQuestions: [],
     currentIndex: 0,
+    timer: 30,
     // feedback: false,
     // disabled: false,
     // correctCSS: '',
@@ -32,13 +34,20 @@ class Game extends Component {
         triviaQuestions: fetchResult.results,
       });
     }
+    this.timerGame();
+  }
+
+  componentWillUnmount() {
+    this.stopTimer(interval);
   }
 
   handleAnswer = (correct, incorrect) => {
+    const { timer } = this.state;
     const answers = [correct, ...incorrect].sort(() => Math.random() - RANDOM_NEGATIVE);
     return answers.map((answer, i) => (
       <button
         type="button"
+        disabled={ timer >= FIVE_SECONDS_DISABLED || timer === 0 }
         // className={ (answer === correct) ? correctCSS : incorrectCSS }
         onClick={ this.handleButton }
         id={ answer === correct ? CORRECT_ANSWER : INCORRECT_ANSWER }
@@ -60,13 +69,32 @@ class Game extends Component {
         .setAttribute('style', green) : child.setAttribute('style', red)));
   };
 
+  timerGame = () => {
+    const oneSecond = 1000;
+    const interval = setInterval(() => {
+      const { timer } = this.state;
+      if (timer > 0) {
+        this.setState(({ timer: previous }) => ({
+          timer: previous - 1,
+        }));
+      } else {
+        this.stopTimer(interval);
+      }
+    }, oneSecond);
+  };
+
+  stopTimer = (interval) => {
+    clearInterval(interval);
+  };
+
   render() {
-    const { triviaQuestions, currentIndex } = this.state;
+    const { triviaQuestions, currentIndex, timer } = this.state;
     const { emailReducer, nameReducer } = this.props;
     return (
       <div className="conteiner">
         <div className="header-conteiner">
           <h2 data-testid="header-player-name">{nameReducer}</h2>
+          <h3>{timer}</h3>
           <img
             data-testid="header-profile-picture"
             src={ getHashGravatar(emailReducer) }
