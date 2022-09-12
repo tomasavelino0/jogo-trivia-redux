@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addEmailAction, addName, getToken, settings } from '../Redux/Actions';
+import { addEmailAction, addName, getToken, settings, addToken } from '../Redux/Actions';
 import { saveToken } from '../services/handleStorage';
 
 class Login extends React.Component {
@@ -39,6 +39,7 @@ class Login extends React.Component {
     dispatch(addName(name));
     const result = await getToken();
     saveToken(result);
+    dispatch(addToken(result));
     history.push('/game');
   };
 
