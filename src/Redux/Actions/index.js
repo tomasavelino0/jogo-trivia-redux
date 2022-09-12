@@ -7,6 +7,7 @@ export const NO_SCORE = 'NO_SCORE';
 export const ADD_TOKEN = 'ADD_TOKEN';
 export const TOTAL_SCORE = 'TOTAL_SCORE';
 export const FEEDBACK = 'FEEDBACK';
+export const HITS_COUNTER = 'HITS_COUNTER';
 
 export const addToken = (token) => ({
   type: ADD_TOKEN,
@@ -35,6 +36,13 @@ export function addName(name) {
   return {
     type: ADD_NAME,
     name,
+  };
+}
+
+export function hitsAdder(hits) {
+  return {
+    type: HITS_COUNTER,
+    hits,
   };
 }
 

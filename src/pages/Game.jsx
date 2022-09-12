@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
 import { scoredPoints, noScoredPoints, totalScore } from '../Redux/Actions';
+import { scoredPoints, noScoredPoints, hitsAdder } from '../Redux/Actions';
 
 const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
@@ -22,6 +23,8 @@ class Game extends Component {
     timer: 30,
     nextQuestion: false,
     feedback: false,
+    hits: 0,
+    // feedback: false,
     // disabled: false,
   };
 
@@ -64,11 +67,19 @@ class Game extends Component {
     ));
   };
 
+  verifyHits = (id) => {
+    if (id === CORRECT_ANSWER) {
+      this.setState((prevState) => ({
+        hits: prevState.hits + 1,
+      }));
+    }
+  };
+
   handleButton = ({ target }) => {
     const { parentNode } = target;
-    console.log(parentNode);
     const green = 'border: 3px solid rgb(6, 240, 15)';
     const red = 'border: 3px solid red';
+    this.verifyHits(target.id);
     parentNode.childNodes
       .forEach((child) => ((child.id === CORRECT_ANSWER) ? child
         .setAttribute('style', green) : child.setAttribute('style', red)));
@@ -97,10 +108,6 @@ class Game extends Component {
       }
     }, oneSecond);
   };
-
-  // stopTimer = (interval) => {
-  //   clearInterval(interval);
-  // };
 
   scorePointsHandler = (target) => {
     const { timer } = this.state;
@@ -144,6 +151,13 @@ class Game extends Component {
   handleFeedback = () => {
     const { history } = this.props;
     // dispatch(feedback());
+    history.push('/feedback');
+  };
+
+  handleToFeedback = () => {
+    const { history, dispatch } = this.props;
+    const { hits } = this.state;
+    dispatch(hitsAdder(hits));
     history.push('/feedback');
   };
 
@@ -193,7 +207,7 @@ class Game extends Component {
             ) : null)
         ))}
         {
-          nextQuestion ? (
+          nextQuestion && currentIndex < MAX_QUESTION ? (
             <button
               type="button"
               data-testid="btn-next"
@@ -210,12 +224,17 @@ class Game extends Component {
               type="button"
               data-testid="btn-next"
               onClick={ this.handleFeedback }
+        {
+          currentIndex === MAX_QUESTION && nextQuestion ? (
+            <button
+              type="button"
+              data-testid="btn-next"
+              onClick={ this.handleToFeedback }
             >
               Next
             </button>
           ) : null
         }
-
       </div>
     );
   }
