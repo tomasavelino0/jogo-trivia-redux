@@ -13,12 +13,14 @@ const POINTS_DEFAULT = 10;
 const EASY = 1;
 const MEDIUM = 2;
 const HARD = 3;
+const MAX_QUESTION = 4;
 
 class Game extends Component {
   state = {
     triviaQuestions: [],
     currentIndex: 0,
     timer: 30,
+    nextQuestion: false,
     // feedback: false,
     // disabled: false,
     // correctCSS: '',
@@ -74,25 +76,32 @@ class Game extends Component {
       .forEach((child) => ((child.id === CORRECT_ANSWER) ? child
         .setAttribute('style', green) : child.setAttribute('style', red)));
     this.scorePointsHandler(target);
+    this.setState({
+      nextQuestion: true,
+    });
   };
 
   timerGame = () => {
     const oneSecond = 1000;
-    const interval = setInterval(() => {
-      const { timer } = this.state;
+    setInterval(() => {
+    // const interval = setInterval(() => {
+      const { timer, currentIndex } = this.state;
       if (timer > 0) {
         this.setState(({ timer: previous }) => ({
           timer: previous - 1,
         }));
-      } else {
-        this.stopTimer(interval);
+      } else if (timer === 0 && currentIndex < MAX_QUESTION) {
+        // this.stopTimer(interval);
+        this.setState({
+          nextQuestion: true,
+        });
       }
     }, oneSecond);
   };
 
-  stopTimer = (interval) => {
-    clearInterval(interval);
-  };
+  // stopTimer = (interval) => {
+  //   clearInterval(interval);
+  // };
 
   scorePointsHandler = (target) => {
     const { timer } = this.state;
@@ -108,8 +117,25 @@ class Game extends Component {
     }
   };
 
+  handleNextQuestion = () => {
+    const { currentIndex } = this.state;
+    if (currentIndex < MAX_QUESTION) {
+      this.setState((prevState) => ({
+        currentIndex: prevState.currentIndex + 1,
+      }));
+    }
+    if (currentIndex > MAX_QUESTION) {
+      this.setState({
+        nextQuestion: false,
+      });
+    }
+    this.setState({
+      nextQuestion: false,
+    });
+  };
+
   render() {
-    const { triviaQuestions, currentIndex, timer } = this.state;
+    const { triviaQuestions, currentIndex, timer, nextQuestion } = this.state;
     const { emailReducer, nameReducer, scoreReducer } = this.props;
     return (
       <div className="conteiner">
@@ -153,6 +179,17 @@ class Game extends Component {
               </div>
             ) : null)
         ))}
+        {
+          nextQuestion ? (
+            <button
+              type="button"
+              data-testid="btn-next"
+              onClick={ this.handleNextQuestion }
+            >
+              Next
+            </button>
+          ) : null
+        }
       </div>
     );
   }
