@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
+// import { scoredPoints } from '../Redux/Actions';
 
 const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
 const INCORRECT_ANSWER = 'incorrect-answer';
 const FIVE_SECONDS_DISABLED = 25;
+const INITIAL_TIMER = 30;
 
 class Game extends Component {
   state = {
@@ -37,13 +39,12 @@ class Game extends Component {
     this.timerGame();
   }
 
-  componentWillUnmount() {
-    this.stopTimer(interval);
-  }
-
   handleAnswer = (correct, incorrect) => {
     const { timer } = this.state;
-    const answers = [correct, ...incorrect].sort(() => Math.random() - RANDOM_NEGATIVE);
+    const answers = [correct, ...incorrect];
+    if (timer === INITIAL_TIMER) {
+      answers.sort(() => Math.random() - RANDOM_NEGATIVE);
+    }
     return answers.map((answer, i) => (
       <button
         type="button"
@@ -87,6 +88,24 @@ class Game extends Component {
     clearInterval(interval);
   };
 
+  // scorePointsHandler = (dificulty, answer) => {
+  //   const { timer } = this.state;
+  //   const point = 10;
+  //   const easy = 1;
+  //   const medium = 2;
+  //   const hard = 3;
+  //   const { dispatch } = this.props;
+  //   switch (answer === question.correct_answer) {
+  //   case dificulty === 'easy': dispatch(scoredPoints(point + (easy * timer)));
+  //     break;
+  //   case dificulty === 'medium': dispatch(scoredPoints(point + (medium * timer)));
+  //     break;
+  //   case dificulty === 'hard': dispatch(scoredPoints(point + (hard * timer)));
+  //     break;
+  //   default:
+  //   }
+  // };
+
   render() {
     const { triviaQuestions, currentIndex, timer } = this.state;
     const { emailReducer, nameReducer } = this.props;
@@ -113,8 +132,7 @@ class Game extends Component {
                 <p data-testid="question-text">{question.question}</p>
                 <div data-testid="answer-options">
                   {
-                    this
-                      .handleAnswer(question.correct_answer, question.incorrect_answers)
+                    this.handleAnswer(question.correct_answer, question.incorrect_answers)
                   }
                 </div>
 
@@ -129,6 +147,7 @@ class Game extends Component {
 const mapStateToProps = (state) => ({
   emailReducer: state.loginReducer.email,
   nameReducer: state.loginReducer.name,
+  scoreReducer: state.scorePointsReducer.score,
 });
 
 Game.propTypes = {

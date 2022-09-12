@@ -1,8 +1,9 @@
-import { ADD_EMAIL, ADD_NAME } from '../Actions';
+import { ADD_EMAIL, ADD_NAME, ADD_TOKEN } from '../Actions';
 
 const INITIAL_STATE = {
   email: '',
   name: '',
+  token: '',
 };
 
 function loginReducer(state = INITIAL_STATE, action) {
@@ -12,6 +13,9 @@ function loginReducer(state = INITIAL_STATE, action) {
   };
   case ADD_NAME: return {
     ...state, name: action.name,
+  };
+  case ADD_TOKEN: return {
+    ...state, token: action.token,
   };
   default: return state;
   }

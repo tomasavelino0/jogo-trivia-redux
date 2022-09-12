@@ -2,6 +2,21 @@
 export const ADD_EMAIL = 'ADD_EMAIL';
 export const SETTINGS = 'SETTINGS';
 export const ADD_NAME = 'ADD_NAME';
+export const SCORE_POINTS = 'SCORE_POINTS';
+export const NO_SCORE = 'NO_SCORE';
+export const ADD_TOKEN = 'ADD_TOKEN';
+
+export const addToken = (token) => ({
+  type: ADD_TOKEN,
+  token,
+});
+
+export const scoredPoints = (points) => ({
+  type: SCORE_POINTS,
+  points,
+});
+
+export const noScoredPoints = () => ({ type: NO_SCORE });
 
 export const settings = () => ({ type: SETTINGS });
 
