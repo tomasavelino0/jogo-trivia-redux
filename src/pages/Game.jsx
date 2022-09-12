@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
-// import { scoredPoints } from '../Redux/Actions';
+import { scoredPoints, noScoredPoints } from '../Redux/Actions';
 
 const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
 const INCORRECT_ANSWER = 'incorrect-answer';
 const FIVE_SECONDS_DISABLED = 25;
 const INITIAL_TIMER = 30;
+const POINTS_DEFAULT = 10;
+const EASY = 1;
+const MEDIUM = 2;
+const HARD = 3;
 
 class Game extends Component {
   state = {
@@ -39,7 +43,7 @@ class Game extends Component {
     this.timerGame();
   }
 
-  handleAnswer = (correct, incorrect) => {
+  handleAnswer = (correct, incorrect, difficulty) => {
     const { timer } = this.state;
     const answers = [correct, ...incorrect];
     if (timer === INITIAL_TIMER) {
@@ -48,6 +52,7 @@ class Game extends Component {
     return answers.map((answer, i) => (
       <button
         type="button"
+        className={ difficulty }
         disabled={ timer >= FIVE_SECONDS_DISABLED || timer === 0 }
         // className={ (answer === correct) ? correctCSS : incorrectCSS }
         onClick={ this.handleButton }
@@ -68,6 +73,7 @@ class Game extends Component {
     parentNode.childNodes
       .forEach((child) => ((child.id === CORRECT_ANSWER) ? child
         .setAttribute('style', green) : child.setAttribute('style', red)));
+    this.scorePointsHandler(target);
   };
 
   timerGame = () => {
@@ -88,38 +94,42 @@ class Game extends Component {
     clearInterval(interval);
   };
 
-  // scorePointsHandler = (dificulty, answer) => {
-  //   const { timer } = this.state;
-  //   const point = 10;
-  //   const easy = 1;
-  //   const medium = 2;
-  //   const hard = 3;
-  //   const { dispatch } = this.props;
-  //   switch (answer === question.correct_answer) {
-  //   case dificulty === 'easy': dispatch(scoredPoints(point + (easy * timer)));
-  //     break;
-  //   case dificulty === 'medium': dispatch(scoredPoints(point + (medium * timer)));
-  //     break;
-  //   case dificulty === 'hard': dispatch(scoredPoints(point + (hard * timer)));
-  //     break;
-  //   default:
-  //   }
-  // };
+  scorePointsHandler = (target) => {
+    const { timer } = this.state;
+    const { dispatch } = this.props;
+    if (target.id === CORRECT_ANSWER && target.className === 'easy') {
+      dispatch(scoredPoints(POINTS_DEFAULT + (timer * EASY)));
+    } else if (target.id === CORRECT_ANSWER && target.className === 'medium') {
+      dispatch(scoredPoints(POINTS_DEFAULT + (timer * MEDIUM)));
+    } else if (target.id === CORRECT_ANSWER && target.className === 'hard') {
+      dispatch(scoredPoints(POINTS_DEFAULT + (timer * HARD)));
+    } else {
+      dispatch(noScoredPoints());
+    }
+  };
 
   render() {
     const { triviaQuestions, currentIndex, timer } = this.state;
-    const { emailReducer, nameReducer } = this.props;
+    const { emailReducer, nameReducer, scoreReducer } = this.props;
     return (
       <div className="conteiner">
         <div className="header-conteiner">
           <h2 data-testid="header-player-name">{nameReducer}</h2>
-          <h3>{timer}</h3>
+          <span data-testid="header-score">
+            Score:
+            {' '}
+            {scoreReducer}
+          </span>
           <img
             data-testid="header-profile-picture"
             src={ getHashGravatar(emailReducer) }
             alt="gravatar"
           />
-          <span data-testid="header-score">score: 0</span>
+          <h3>
+            Tempo:
+            {' '}
+            {timer}
+          </h3>
         </div>
         {triviaQuestions.map((question, index) => (
           (index === currentIndex
@@ -132,7 +142,11 @@ class Game extends Component {
                 <p data-testid="question-text">{question.question}</p>
                 <div data-testid="answer-options">
                   {
-                    this.handleAnswer(question.correct_answer, question.incorrect_answers)
+                    this.handleAnswer(
+                      question.correct_answer,
+                      question.incorrect_answers,
+                      question.difficulty,
+                    )
                   }
                 </div>
 
@@ -145,14 +159,16 @@ class Game extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  emailReducer: state.loginReducer.email,
-  nameReducer: state.loginReducer.name,
-  scoreReducer: state.scorePointsReducer.score,
+  emailReducer: state.player.email,
+  nameReducer: state.player.name,
+  scoreReducer: state.player.score,
 });
 
 Game.propTypes = {
   emailReducer: PropTypes.string.isRequired,
   nameReducer: PropTypes.string.isRequired,
+  scoreReducer: PropTypes.number.isRequired,
+  dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
