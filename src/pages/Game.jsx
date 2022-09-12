@@ -23,8 +23,6 @@ class Game extends Component {
     nextQuestion: false,
     // feedback: false,
     // disabled: false,
-    // correctCSS: '',
-    // incorrectCSS: '',
   };
 
   async componentDidMount() {
