@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
-import { scoredPoints, noScoredPoints, hitsAdder } from '../Redux/Actions';
+import { scoredPoints, noScoredPoints, totalScore, hitsAdder } from '../Redux/Actions';
 
 const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
@@ -21,9 +21,8 @@ class Game extends Component {
     currentIndex: 0,
     timer: 30,
     nextQuestion: false,
+    feedback: false,
     hits: 0,
-    // feedback: false,
-    // disabled: false,
   };
 
   async componentDidMount() {
@@ -84,6 +83,7 @@ class Game extends Component {
     this.scorePointsHandler(target);
     this.setState({
       nextQuestion: true,
+      feedback: false,
     });
   };
 
@@ -100,6 +100,7 @@ class Game extends Component {
         // this.stopTimer(interval);
         this.setState({
           nextQuestion: true,
+          feedback: false,
         });
       }
     }, oneSecond);
@@ -107,13 +108,16 @@ class Game extends Component {
 
   scorePointsHandler = (target) => {
     const { timer } = this.state;
-    const { dispatch } = this.props;
+    const { dispatch, scoreReducer } = this.props;
     if (target.id === CORRECT_ANSWER && target.className === 'easy') {
       dispatch(scoredPoints(POINTS_DEFAULT + (timer * EASY)));
+      dispatch(totalScore(POINTS_DEFAULT + (timer * EASY) + scoreReducer));
     } else if (target.id === CORRECT_ANSWER && target.className === 'medium') {
       dispatch(scoredPoints(POINTS_DEFAULT + (timer * MEDIUM)));
+      dispatch(totalScore(POINTS_DEFAULT + (timer * MEDIUM) + scoreReducer));
     } else if (target.id === CORRECT_ANSWER && target.className === 'hard') {
       dispatch(scoredPoints(POINTS_DEFAULT + (timer * HARD)));
+      dispatch(totalScore(POINTS_DEFAULT + (timer * HARD) + scoreReducer));
     } else {
       dispatch(noScoredPoints());
     }
@@ -134,6 +138,11 @@ class Game extends Component {
     this.setState({
       nextQuestion: false,
     });
+    if (currentIndex === MAX_QUESTION) {
+      this.setState({
+        feedback: true,
+      }, () => this.handleToFeedback());
+    }
   };
 
   handleToFeedback = () => {
@@ -144,7 +153,7 @@ class Game extends Component {
   };
 
   render() {
-    const { triviaQuestions, currentIndex, timer, nextQuestion } = this.state;
+    const { triviaQuestions, currentIndex, timer, nextQuestion, feedback } = this.state;
     const { emailReducer, nameReducer, scoreReducer } = this.props;
     return (
       <div className="conteiner">
@@ -189,7 +198,7 @@ class Game extends Component {
             ) : null)
         ))}
         {
-          nextQuestion && currentIndex < MAX_QUESTION ? (
+          nextQuestion ? (
             <button
               type="button"
               data-testid="btn-next"
@@ -199,8 +208,9 @@ class Game extends Component {
             </button>
           ) : null
         }
+
         {
-          currentIndex === MAX_QUESTION && nextQuestion ? (
+          feedback ? (
             <button
               type="button"
               data-testid="btn-next"
@@ -229,6 +239,7 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+
 };
 
 export default connect(mapStateToProps)(Game);
