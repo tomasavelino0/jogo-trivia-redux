@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
-import loginReducer from './login';
-import scorePointsReducer from './gameReducer';
+import player from './player';
 
-const reducer = combineReducers({ loginReducer, scorePointsReducer });
+const reducer = combineReducers({ player });
 
 export default reducer;
