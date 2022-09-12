@@ -5,6 +5,8 @@ export const ADD_NAME = 'ADD_NAME';
 export const SCORE_POINTS = 'SCORE_POINTS';
 export const NO_SCORE = 'NO_SCORE';
 export const ADD_TOKEN = 'ADD_TOKEN';
+export const TOTAL_SCORE = 'TOTAL_SCORE';
+export const FEEDBACK = 'FEEDBACK';
 export const HITS_COUNTER = 'HITS_COUNTER';
 
 export const addToken = (token) => ({
@@ -20,6 +22,8 @@ export const scoredPoints = (points) => ({
 export const noScoredPoints = () => ({ type: NO_SCORE });
 
 export const settings = () => ({ type: SETTINGS });
+
+export const feedback = () => ({ type: FEEDBACK });
 
 export function addEmailAction(email) {
   return {
@@ -48,3 +52,8 @@ export const getToken = async () => {
   const responseToken = await fetchToken.json();
   return responseToken.token;
 };
+
+export const totalScore = (total) => ({
+  type: TOTAL_SCORE,
+  total,
+});
