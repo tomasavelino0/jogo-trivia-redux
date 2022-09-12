@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
-import { scoredPoints, noScoredPoints, totalScore } from '../Redux/Actions';
-import { scoredPoints, noScoredPoints, hitsAdder } from '../Redux/Actions';
+import { scoredPoints, noScoredPoints, totalScore, hitsAdder } from '../Redux/Actions';
 
 const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
@@ -24,8 +23,6 @@ class Game extends Component {
     nextQuestion: false,
     feedback: false,
     hits: 0,
-    // feedback: false,
-    // disabled: false,
   };
 
   async componentDidMount() {
@@ -144,14 +141,8 @@ class Game extends Component {
     if (currentIndex === MAX_QUESTION) {
       this.setState({
         feedback: true,
-      }, () => this.handleFeedback());
+      }, () => this.handleToFeedback());
     }
-  };
-
-  handleFeedback = () => {
-    const { history } = this.props;
-    // dispatch(feedback());
-    history.push('/feedback');
   };
 
   handleToFeedback = () => {
@@ -207,7 +198,7 @@ class Game extends Component {
             ) : null)
         ))}
         {
-          nextQuestion && currentIndex < MAX_QUESTION ? (
+          nextQuestion ? (
             <button
               type="button"
               data-testid="btn-next"
@@ -220,12 +211,6 @@ class Game extends Component {
 
         {
           feedback ? (
-            <button
-              type="button"
-              data-testid="btn-next"
-              onClick={ this.handleFeedback }
-        {
-          currentIndex === MAX_QUESTION && nextQuestion ? (
             <button
               type="button"
               data-testid="btn-next"
@@ -244,7 +229,6 @@ const mapStateToProps = (state) => ({
   emailReducer: state.player.email,
   nameReducer: state.player.name,
   scoreReducer: state.player.score,
-  total: state.player.total,
 });
 
 Game.propTypes = {

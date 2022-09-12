@@ -1,10 +1,7 @@
 import {
   ADD_EMAIL,
   ADD_NAME,
-  ADD_TOKEN, SCORE_POINTS, NO_SCORE, TOTAL_SCORE } from '../Actions';
-import { ADD_EMAIL, ADD_NAME, ADD_TOKEN,
-  SCORE_POINTS, NO_SCORE, HITS_COUNTER } from '../Actions';
-
+  ADD_TOKEN, SCORE_POINTS, NO_SCORE, TOTAL_SCORE, HITS_COUNTER } from '../Actions';
 
 const INITIAL_STATE = {
   score: 0,
