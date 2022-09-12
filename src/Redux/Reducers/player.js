@@ -8,8 +8,7 @@ const INITIAL_STATE = {
   email: '',
   name: '',
   token: '',
-  total: 0,
-  hits: 0,
+  assertions: 0,
 };
 
 function loginReducer(state = INITIAL_STATE, action) {
@@ -27,7 +26,7 @@ function loginReducer(state = INITIAL_STATE, action) {
     ...state, total: action.points,
   };
   case HITS_COUNTER: return {
-    ...state, hits: action.hits,
+    ...state, assertions: action.assertions,
   };
   case NO_SCORE: return {
     ...state,

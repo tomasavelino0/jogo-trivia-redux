@@ -39,10 +39,10 @@ export function addName(name) {
   };
 }
 
-export function hitsAdder(hits) {
+export function hitsAdder(assertions) {
   return {
     type: HITS_COUNTER,
-    hits,
+    assertions,
   };
 }
 
