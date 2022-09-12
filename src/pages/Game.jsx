@@ -56,7 +56,6 @@ class Game extends Component {
         type="button"
         className={ difficulty }
         disabled={ timer >= FIVE_SECONDS_DISABLED || timer === 0 }
-        // className={ (answer === correct) ? correctCSS : incorrectCSS }
         onClick={ this.handleButton }
         id={ answer === correct ? CORRECT_ANSWER : INCORRECT_ANSWER }
         data-testid={ answer === correct ? CORRECT_ANSWER : `wrong-answer-${i}` }
