@@ -11,6 +11,11 @@ class Feedback extends Component {
     history.push('/');
   };
 
+  goRanking = () => {
+    const { history } = this.props;
+    history.push('/ranking');
+  };
+
   render() {
     const { assertionsReducer, scoreReducer } = this.props;
     let msg = '';
@@ -31,6 +36,13 @@ class Feedback extends Component {
           onClick={ this.playAgain }
         >
           Play Again
+        </button>
+        <button
+          type="button"
+          data-testid="btn-ranking"
+          onClick={ this.goRanking }
+        >
+          Ranking
         </button>
       </div>
     );

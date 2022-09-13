@@ -6,6 +6,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Feedback from './pages/Feedback';
 import './App.css';
+import Ranking from './pages/Ranking';
 
 class App extends Component {
   render() {
@@ -31,6 +32,11 @@ class App extends Component {
             exact
             path="/feedback"
             component={ Feedback }
+          />
+          <Route
+            exact
+            path="/ranking"
+            component={ Ranking }
           />
         </Switch>
       </div>
