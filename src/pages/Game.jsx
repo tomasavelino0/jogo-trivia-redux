@@ -4,7 +4,7 @@ import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
 import { scoredPoints, noScoredPoints, totalScore, hitsAdder } from '../Redux/Actions';
 
-const RANDOM_NEGATIVE = 0.5;
+// const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
 const INCORRECT_ANSWER = 'incorrect-answer';
 const FIVE_SECONDS_DISABLED = 25;
@@ -43,13 +43,29 @@ class Game extends Component {
     this.timerGame();
   }
 
+  // Função para randomizar array
+  shuffleArray = (arr) => {
+    // Loop em todos os elementos
+    for (let i = arr.length - 1; i > 0; i--) {
+      // Escolhendo elemento aleatório
+      const j = Math.floor(Math.random() * (i + 1));
+      // Reposicionando elemento
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    // Retornando array com aleatoriedade
+    return arr;
+  };
+
   handleAnswer = (correct, incorrect, difficulty) => {
     const { timer } = this.state;
     const answers = [correct, ...incorrect];
-    if (timer === INITIAL_TIMER) {
-      answers.sort(() => Math.random() - RANDOM_NEGATIVE);
-    }
-    return answers.map((answer, i) => (
+    const randomAnswers = this.shuffleArray(answers);
+    // console.log(answers[Math.floor((Math.random() * answers.length))]);
+    // if (timer === INITIAL_TIMER) {
+    //   const shuffledAnswers = answers[Math.floor((Math.random() * answers.length))];
+    //   // console.log(choices[~~(choices.length * Math.random())]);
+    // }
+    return randomAnswers.map((answer, i) => (
       <button
         type="button"
         className={ difficulty }
@@ -84,20 +100,19 @@ class Game extends Component {
     this.setState({
       nextQuestion: true,
       feedback: false,
+      timer: 30,
     });
   };
 
   timerGame = () => {
     const oneSecond = 1000;
     setInterval(() => {
-    // const interval = setInterval(() => {
       const { timer, currentIndex } = this.state;
       if (timer > 0) {
         this.setState(({ timer: previous }) => ({
           timer: previous - 1,
         }));
       } else if (timer === 0 && currentIndex < MAX_QUESTION) {
-        // this.stopTimer(interval);
         this.setState({
           nextQuestion: true,
           feedback: false,
