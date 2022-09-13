@@ -17,13 +17,16 @@ const saveRanking = (obje) => {
 };
 
 export const rankingDetails = (currentObj) => {
-  if (localStorage.getItem(RANKING)) {
-    const getStorage = localStorage.getItem(JSON.parse(RANKING));
-    const rankingAtt = [getStorage, currentObj];
-    saveRanking(rankingAtt);
-  } else {
+  const moreItensStorage = localStorage.getItem(RANKING);
+  const parseSavedItens = JSON.parse(moreItensStorage);
+  if (!parseSavedItens) {
     const item = [currentObj];
     localStorage.setItem(RANKING, JSON.stringify(item));
+  } else {
+    const getStorage = localStorage.getItem(RANKING);
+    const parsedStorage = JSON.parse(getStorage);
+    const rankingAtt = [...parsedStorage, currentObj];
+    saveRanking(rankingAtt);
   }
 };
 

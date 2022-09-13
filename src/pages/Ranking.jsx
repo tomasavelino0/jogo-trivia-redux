@@ -13,9 +13,10 @@ export default class Ranking extends Component {
   getRankingStorage = () => {
     const RANKING = 'ranking';
     if (localStorage.getItem(RANKING)) {
-      const rankingStorage = localStorage.getItem(JSON.parse(RANKING));
+      const rankingStorage = localStorage.getItem(RANKING);
+      const result = JSON.parse(rankingStorage);
       this.setState({
-        ranking: rankingStorage,
+        ranking: result,
       });
     }
   };
