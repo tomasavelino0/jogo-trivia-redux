@@ -2,10 +2,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
+import { rankingDetails } from '../services/handleStorage';
 
 const WELL_DONE = '3';
 
 class Feedback extends Component {
+  componentDidMount() {
+    this.createRanking();
+  }
+
+  createRanking = () => {
+    const { nameReducer, scoreReducer, emailReducer } = this.props;
+    const obejRanking = { name: nameReducer,
+      score: scoreReducer,
+      picture: getHashGravatar(emailReducer) };
+    rankingDetails(obejRanking);
+  };
+
   playAgain = () => {
     const { history } = this.props;
     history.push('/');
