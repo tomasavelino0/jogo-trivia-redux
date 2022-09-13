@@ -3,12 +3,18 @@ import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
 import { rankingDetails } from '../services/handleStorage';
+import { resetScore } from '../Redux/Actions';
 
 const WELL_DONE = '3';
 
 class Feedback extends Component {
   componentDidMount() {
     this.createRanking();
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(resetScore());
   }
 
   createRanking = () => {
@@ -91,6 +97,7 @@ Feedback.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Feedback);

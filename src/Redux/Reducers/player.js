@@ -1,7 +1,8 @@
 import {
   ADD_EMAIL,
   ADD_NAME,
-  ADD_TOKEN, SCORE_POINTS, NO_SCORE, TOTAL_SCORE, HITS_COUNTER } from '../Actions';
+  ADD_TOKEN, SCORE_POINTS, NO_SCORE, TOTAL_SCORE,
+  HITS_COUNTER, RESET_SCORE } from '../Actions';
 
 const INITIAL_STATE = {
   score: 0,
@@ -33,6 +34,9 @@ function loginReducer(state = INITIAL_STATE, action) {
   };
   case TOTAL_SCORE: return {
     ...state, score: action.total,
+  };
+  case RESET_SCORE: return {
+    ...state, score: 0,
   };
   default: return state;
   }

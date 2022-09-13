@@ -4,8 +4,9 @@ export const SETTINGS = 'SETTINGS';
 export const ADD_NAME = 'ADD_NAME';
 export const SCORE_POINTS = 'SCORE_POINTS';
 export const NO_SCORE = 'NO_SCORE';
-export const ADD_TOKEN = 'ADD_TOKEN';
 export const TOTAL_SCORE = 'TOTAL_SCORE';
+export const RESET_SCORE = 'RESET_SCORE';
+export const ADD_TOKEN = 'ADD_TOKEN';
 export const FEEDBACK = 'FEEDBACK';
 export const HITS_COUNTER = 'HITS_COUNTER';
 
@@ -20,6 +21,8 @@ export const scoredPoints = (points) => ({
 });
 
 export const noScoredPoints = () => ({ type: NO_SCORE });
+
+export const resetScore = () => ({ type: RESET_SCORE });
 
 export const settings = () => ({ type: SETTINGS });
 
