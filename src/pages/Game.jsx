@@ -4,16 +4,15 @@ import { PropTypes } from 'prop-types';
 import getHashGravatar from '../services/gravatar';
 import { scoredPoints, noScoredPoints, totalScore, hitsAdder } from '../Redux/Actions';
 
-const RANDOM_NEGATIVE = 0.5;
 const CORRECT_ANSWER = 'correct-answer';
 const INCORRECT_ANSWER = 'incorrect-answer';
-const FIVE_SECONDS_DISABLED = 25;
 const INITIAL_TIMER = 30;
 const POINTS_DEFAULT = 10;
 const EASY = 1;
 const MEDIUM = 2;
 const HARD = 3;
 const MAX_QUESTION = 4;
+const NEGATIVE_RANDOM = 0.5;
 
 class Game extends Component {
   state = {
@@ -23,6 +22,8 @@ class Game extends Component {
     nextQuestion: false,
     feedback: false,
     hits: 0,
+    currentQuestion: {},
+    shuffledAnswers: [],
   };
 
   async componentDidMount() {
@@ -38,31 +39,23 @@ class Game extends Component {
     } else {
       this.setState({
         triviaQuestions: fetchResult.results,
-      });
+      }, () => this.getShuffledAnswers());
     }
     this.timerGame();
   }
 
-  handleAnswer = (correct, incorrect, difficulty) => {
-    const { timer } = this.state;
-    const answers = [correct, ...incorrect];
-    if (timer === INITIAL_TIMER) {
-      answers.sort(() => Math.random() - RANDOM_NEGATIVE);
-    }
-    return answers.map((answer, i) => (
-      <button
-        type="button"
-        className={ difficulty }
-        disabled={ timer >= FIVE_SECONDS_DISABLED || timer === 0 }
-        onClick={ this.handleButton }
-        id={ answer === correct ? CORRECT_ANSWER : INCORRECT_ANSWER }
-        data-testid={ answer === correct ? CORRECT_ANSWER : `wrong-answer-${i}` }
-        key={ answer }
-      >
-        { answer }
-      </button>
-    ));
+  getShuffledAnswers = () => {
+    const { triviaQuestions, currentIndex } = this.state;
+    const currentQuestion = triviaQuestions[currentIndex];
+    const answers = [
+      currentQuestion.correct_answer, ...currentQuestion.incorrect_answers];
+    this.setState({
+      currentQuestion,
+      shuffledAnswers: this.setShuffledArray(answers),
+    });
   };
+
+  setShuffledArray = (answer) => answer.sort(() => Math.random() - NEGATIVE_RANDOM);
 
   verifyHits = (id) => {
     if (id === CORRECT_ANSWER) {
@@ -90,14 +83,12 @@ class Game extends Component {
   timerGame = () => {
     const oneSecond = 1000;
     setInterval(() => {
-    // const interval = setInterval(() => {
       const { timer, currentIndex } = this.state;
       if (timer > 0) {
         this.setState(({ timer: previous }) => ({
           timer: previous - 1,
         }));
       } else if (timer === 0 && currentIndex < MAX_QUESTION) {
-        // this.stopTimer(interval);
         this.setState({
           nextQuestion: true,
           feedback: false,
@@ -128,16 +119,16 @@ class Game extends Component {
     if (currentIndex < MAX_QUESTION) {
       this.setState((prevState) => ({
         currentIndex: prevState.currentIndex + 1,
-      }));
+        timer: INITIAL_TIMER,
+      }), () => {
+        this.getShuffledAnswers();
+      });
     }
     if (currentIndex > MAX_QUESTION) {
       this.setState({
         nextQuestion: false,
       });
     }
-    this.setState({
-      nextQuestion: false,
-    });
     if (currentIndex === MAX_QUESTION) {
       this.setState({
         feedback: true,
@@ -153,8 +144,14 @@ class Game extends Component {
   };
 
   render() {
-    const { triviaQuestions, currentIndex, timer, nextQuestion, feedback } = this.state;
+    const {
+      timer,
+      nextQuestion,
+      feedback,
+      currentQuestion,
+      shuffledAnswers } = this.state;
     const { emailReducer, nameReducer, scoreReducer } = this.props;
+    let wrongNum = 0;
     return (
       <div className="conteiner">
         <div className="header-conteiner">
@@ -175,28 +172,32 @@ class Game extends Component {
             {timer}
           </h3>
         </div>
-        {triviaQuestions.map((question, index) => (
-          (index === currentIndex
-            ? (
-              <div key={ index }>
-                <p data-testid="question-category">
-                  {' '}
-                  {question.category}
-                </p>
-                <p data-testid="question-text">{question.question}</p>
-                <div data-testid="answer-options">
-                  {
-                    this.handleAnswer(
-                      question.correct_answer,
-                      question.incorrect_answers,
-                      question.difficulty,
-                    )
-                  }
-                </div>
-
-              </div>
-            ) : null)
-        ))}
+        <div>
+          <p data-testid="question-category">{ currentQuestion.category }</p>
+          <p data-testid="question-text">{ currentQuestion.question }</p>
+        </div>
+        <div data-testid="answer-options">
+          {
+            shuffledAnswers.map((answer) => {
+              if (answer !== currentQuestion.correct_answer) wrongNum += 1;
+              return (
+                <button
+                  key={ answer }
+                  id={ answer === currentQuestion.correct_answer
+                    ? CORRECT_ANSWER : INCORRECT_ANSWER }
+                  type="button"
+                  className={ currentQuestion.difficulty }
+                  data-testid={ answer === currentQuestion.correct_answer
+                    ? CORRECT_ANSWER : `wrong-answer-${wrongNum - 1}` }
+                  disabled={ timer === 0 }
+                  onClick={ this.handleButton }
+                >
+                  { answer }
+                </button>
+              );
+            })
+          }
+        </div>
         {
           nextQuestion ? (
             <button
