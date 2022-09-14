@@ -2,32 +2,44 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithRouterAndRedux from './helpers/renderWithRouterAndRedux';
-import Ranking from '../pages/Ranking';
 import App from '../App';
+
+const mockPlayer = [{
+    name: 'Jorjão',
+    score: 70,
+  },
+  {
+    name: 'Zeca',
+    score: 90,
+  }
+];
+
+
 
 describe('Testando componente Ranking', () => {
     it('Testa se o componente Ranking possui os textos', () => {
-      renderWithRouterAndRedux(<Ranking />);
+      const { history } = renderWithRouterAndRedux(<App />);
+      localStorage.setItem('ranking', JSON.stringify(mockPlayer));
+      history.push('/ranking');
 
-      const playerName = screen.getByTestId("player-name-0");
-      const playerScore = screen.getByTestId("player-score-0");
-      const playerNameOne = screen.getByTestId("player-name-1");
-      const playerScoreOne = screen.getByTestId("player-score-1");
-      const playerScoreOne = screen.getByTestId("player-score-1");
-      const totalQuestions = screen.getByTestId("feedback-total-question");
-      const totalScore = screen.getByTestId("feedback-total-score");
-      const buttonPlayAgain = screen.getByTestId("btn-play-again");
-      const buttonRanking = screen.getByTestId("btn-ranking");
+      const rankingTitle = screen.getByText(/ranking/i);
+      expect(rankingTitle).toBeInTheDocument();
 
-      player-name-2
+      const players = screen.getAllByRole('heading',{ level: 2 });
+      expect(players[0]).toHaveTextContent('Zeca');
+      expect(players[1]).toHaveTextContent('Jorjão');
+
+      const scores = screen.getAllByRole('heading', { level: 3 });
+      expect(scores[0]).toHaveTextContent(90);
+      expect(scores[1]).toHaveTextContent(70); 
+    });
+    it('Testa se o botão Home leva para a página inicial', () => {
+      const { history } = renderWithRouterAndRedux(<App />, mockPlayer, '/ranking');
+      
+      const buttonHome = screen.getByRole('button', { name: /home/i });
   
-      expect(imgGravatar).toBeInTheDocument();
-      expect(playerName).toBeInTheDocument();
-      expect(playerScore).toBeInTheDocument();
-      expect(playerNameOne).toBeInTheDocument();
-      expect(playerScoreOne).toBeInTheDocument();
-      expect(totalQuestions).toBeInTheDocument();
-      expect(totalScore).toBeInTheDocument();
-      expect(buttonPlayAgain).toBeInTheDocument();
-      expect(buttonRanking).toBeInTheDocument();
+      userEvent.click(buttonHome);
+      const { pathname } = history.location;
+      expect(pathname).toBe('/');
+    });
     });
