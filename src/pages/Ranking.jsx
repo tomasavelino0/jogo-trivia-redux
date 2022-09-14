@@ -33,7 +33,7 @@ export default class Ranking extends Component {
 
         {ranking.sort((a, b) => b.score - a.score).map((person, index) => (
           <div key={ index }>
-            <h1 data-testid={ `player-name-${index}` }>{person.name}</h1>
+            <h2 data-testid={ `player-name-${index}` }>{person.name}</h2>
             <h3 data-testid={ `player-score-${index}` }>{person.score}</h3>
           </div>
         ))}
